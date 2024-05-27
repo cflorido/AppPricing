@@ -16,14 +16,14 @@ body {
     align-items: flex-start;
     padding: 5px;
     margin-top: 40px;
-    margin-bottom: 40px;
+    margin-bottom: 35px;
 }
 
 
 .button-29 {
     align-items: center;
     appearance: none;
-    background-image: radial-gradient(100% 100% at 100% 0,  rgba(0,172,193,1) 0, rgba(84,58,183,1) 100%);
+    background-image: radial-gradient(100% 100% at 100% 0,  rgba(84,58,183,1) 0, rgba(84,58,183,1) 100%);
     border: 0;
     border-radius: 6px;
     box-shadow: rgba(45, 35, 66, .4) 0 2px 4px,rgba(45, 35, 66, .3) 0 7px 13px -3px,rgba(58, 65, 111, .5) 0 -3px 0 inset;
@@ -288,4 +288,23 @@ p {
       display: flex;
       justify-content: center;
   
+  }
+
+  .rectangulo {
+    width: calc(50% - 1cm); /* 50% del ancho de la página menos 1 cm de margen en cada lado */
+    height: 3.5cm; /* Altura del rectángulo */
+    background-color: rgba(84,58,183,1); /* Color morado */
+    margin-left: 1cm; /* Margen de 1 cm en todas las direcciones */
+    margin-right: 1cm;
+    margin-bottom: 1cm;
+    float: left; /* Coloca los rectángulos uno al lado del otro */
+}
+  
+.container-rectangulos {
+    width: 100%; /* Ancho completo de la página */
+    overflow: hidden; /* Evita que los rectángulos se desborden del contenedor */
+}
+
+.contenedor5 {
+    display: flex; /* Usar flexbox */
   }
