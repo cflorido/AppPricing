@@ -1,4 +1,6 @@
 from flask import Flask, render_template
+import matplotlib
+matplotlib.use('agg')
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -27,6 +29,7 @@ from flask import Flask, render_template, request, jsonify
 from io import BytesIO
 import base64
 
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -37,7 +40,7 @@ def index():
 
 def app_function(strike, ciudad):   
     # Leer el archivo CSV
-    filename = 'Todos_LosDatos.csv'
+    filename = 'datos.csv'
     df= pd.read_csv(filename)
 
     # Lista de los nombres de las regiones

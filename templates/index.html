@@ -33,11 +33,13 @@
             </svg>
         </div>
     </div>
+    
     <div class="container2">
         
         <div class="grafica">
-            
-            <img src="https://github.com/cflorido/AppPricing/blob/main/templates/Imagenes/grafica.png" alt="Gráfica de ejemplo" width="400">
+            <img src="./Imagenes/grafica.png" alt="Gráfica de ejemplo" width="400">
+            <img src="Imagenes/grafica.png" alt="Gráfica de ejemplo" width="400">
+            <img id="grafica" src="assets/grafica.png" alt="Gráfica de ejemplo" width="400">
         </div>
         <div class="opciones">
             <div class="form-group">
@@ -96,5 +98,28 @@
             <p style="font-size: 20px; text-align: center;  color: rgb(255, 255, 255);">$ 320.000</p>
         </div>
     </div>
+
+
+    <script>
+        function calcular() {
+            const ciudad = document.getElementById('ciudad').value;
+            const valorNumerico = document.getElementById('valorNumerico').value;
+
+            fetch('/calcular', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ciudad, valorNumerico }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const grafica = document.getElementById('grafica');
+                grafica.src = data.graficaUrl;
+            });
+        }
+    </script>
+
+
 </body>
 </html>
