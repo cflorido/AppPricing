@@ -280,7 +280,7 @@ p {
 
   .rectangulo {
     width: calc(50% - 1cm); /* 50% del ancho de la página menos 1 cm de margen en cada lado */
-    height: 3.1cm; /* Altura del rectángulo */
+    height: 4.5cm; /* Altura del rectángulo */
     background-color: rgba(84,58,183,1); /* Color morado */
     margin-left: 1cm; /* Margen de 1 cm en todas las direcciones */
     margin-right: 1cm;
