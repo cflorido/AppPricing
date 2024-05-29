@@ -387,15 +387,15 @@ def calcular():
     fig = app_function(valor_numerico, ciudad)
 
     # Guarda la gráfica en un archivo en la carpeta 'imagenes'
-    folder_path = os.path.join(app.root_path, 'templates/Imagenes')
+    folder_path = os.path.join(app.root_path, 'static')
     os.makedirs(folder_path, exist_ok=True)  # Crea la carpeta si no existe
     file_path = os.path.join(folder_path, 'grafica.png')
     fig.savefig(file_path)
 
     # Devuelve la URL completa de la imagen
-    imagen_url = url_for('static', filename='Imagenes/grafica.png')
-    return jsonify({ 'graficaUrl': imagen_url })
+    imagen_url = url_for('static', filename='static/grafica.png')
+    return jsonify({ 'graficaUrl': {{ url_for('static', filename='grafica.png') }} })
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=8080)

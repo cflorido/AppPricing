@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Mi Aplicación</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
 </head>
 <body>
     <div class="header">
@@ -37,9 +38,7 @@
     <div class="container2">
         
         <div class="grafica">
-            <img src="./Imagenes/grafica.png" alt="Gráfica de ejemplo" width="400">
-            <img src="Imagenes/grafica.png" alt="Gráfica de ejemplo" width="400">
-            <img id="grafica" src="assets/grafica.png" alt="Gráfica de ejemplo" width="400">
+            <img id= "grafica" src="{{ url_for('static', filename='grafica.png') }}" alt="Mi imagen">
         </div>
         
         <div class="opciones">
@@ -117,6 +116,7 @@
             .then(data => {
                 const grafica = document.getElementById('grafica');
                 grafica.src = data.graficaUrl;
+                window.location.reload();
             });
         }
     </script>
