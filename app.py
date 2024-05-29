@@ -332,9 +332,8 @@ def app_function(strike, ciudad):
             option_prices[region] = {'call_hdd': call_hdd, 'put_hdd': put_hdd, 'call_cdd': call_cdd, 'put_cdd': put_cdd}
 
         return option_prices
-####Intento con todos
-# Parámetros de ejemplo
-
+    ####Intento con todos
+    # Parámetros de ejemplo
     strike_price = strike
     risk_free_rate = 0.0521487
     index_point_price = 25
