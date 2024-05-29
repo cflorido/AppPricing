@@ -373,6 +373,8 @@ def app_function(strike, ciudad):
     plt.close()
     return fig
 
+from flask import request, url_for
+
 @app.route('/calcular', methods=['POST'])
 def calcular():
     data = request.json
@@ -383,13 +385,14 @@ def calcular():
     fig = app_function(valor_numerico, ciudad)
 
     # Guarda la gráfica en un archivo en la carpeta 'imagenes'
-    folder_path = os.path.join(app.root_path, 'imagenes')
+    folder_path = os.path.join(app.root_path, 'templates/Imagenes')
     os.makedirs(folder_path, exist_ok=True)  # Crea la carpeta si no existe
     file_path = os.path.join(folder_path, 'grafica.png')
     fig.savefig(file_path)
 
-    # Devuelve la URL de la imagen
-    return jsonify({ 'graficaUrl': '/static/imagenes/grafica.png' })
+    # Devuelve la URL completa de la imagen
+    imagen_url = url_for('static', filename='Imagenes/grafica.png')
+    return jsonify({ 'graficaUrl': imagen_url })
 
 
 if __name__ == '__main__':
