@@ -133,7 +133,16 @@ def app_function(strike, ciudad):
     # Seleccionar solo las columnas de temperatura promedio para cada región
     columns_to_plot = ['TPROM_Anti', 'TPROM_Narino', 'TPROM_NortSan', 'TPROM_Tolima', 'TPROM_Cauca']
 
-    # fill_missing_data will handle missing dates; plotting done after resampling
+    # Graficar las columnas seleccionadas
+    plt.figure(figsize=(10, 5))
+    for column in columns_to_plot:
+        plt.plot(df.index, df[column], label=column)
+
+    plt.legend()
+    plt.title(_('Temperatura Promedio por Región'))
+    plt.xlabel('Fecha')
+    plt.ylabel('Temperatura (°C)')
+
 
     def fill_missing_data(df, regions):
         df['Fecha'] = pd.to_datetime(df['Fecha'])  # Convertimos la columna 'Fecha' a datetime
@@ -160,8 +169,8 @@ def app_function(strike, ciudad):
 
     plt.legend()
     plt.title(_('Temperatura Promedio por Región'))
-    plt.xlabel(_('Fecha'))
-    plt.ylabel(_('Temperatura (°C)'))
+    plt.xlabel('Fecha')
+    plt.ylabel('Temperatura (°C)')
 
     # Limitar los años en el eje x hasta el año 2005
     plt.xlim(df.index.min(), pd.Timestamp('2006-7-13'))
@@ -218,8 +227,8 @@ def app_function(strike, ciudad):
         plt.figure(figsize=(10,6))
         for j in range(n):
             plt.plot(t, paths[j])
-        plt.xlabel(_('Time (years)'))
-        plt.ylabel(_('T [°C]'))
+        plt.xlabel('Time (years)')
+        plt.ylabel('T [°C]')
         plt.title(_('Simulacion de Temperatura para {var}').format(var=i))
 
         # Calculate the mean of the simulated paths

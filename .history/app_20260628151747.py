@@ -40,21 +40,6 @@ EN_TRANSLATIONS = {
     'Pricing Derivados Climáticos': 'Climate Derivatives Pricing',
     'Esta aplicación ha sido diseñada para llevar a cabo el cálculo de precios de derivados climáticos, centrándose en la temperatura, para las principales regiones cafetaleras de Colombia.':
         'This application is designed to compute climate-derivative prices based on temperature for the main coffee-growing regions of Colombia.',
-    'Temperatura Promedio por Región': 'Average Temperature by Region',
-    'Simulacion de Temperatura para {var}': 'Temperature Simulation for {var}',
-    'Proyección de Temperaturas para el Próximo Año (366 días)': 'Temperature Projection for the Next Year (366 days)',
-    'Proyeccion Final (Fourier + Mean Reversion)': 'Final Projection (Fourier + Mean Reversion)',
-    'Proyeccion Fourier': 'Fourier Projection',
-    'Proyeccion Mean Reversioin': 'Mean-Reversion Projection',
-    'Ajuste de Temperaturas en {region} usando Transformada de Fourier y Modelos Estocásticos':
-        'Temperature Fit in {region} using Fourier Transform and Stochastic Models',
-    'Heating Degree Days (HDD) y Cooling Degree Days (CDD) en {region}':
-        'Heating Degree Days (HDD) and Cooling Degree Days (CDD) in {region}',
-    'Fecha': 'Date',
-    'Grados-Día': 'Degree-Days',
-    'Precio de Opciones Climáticas en {ciudad}': 'Climate Option Prices in {ciudad}',
-    'Mes': 'Month',
-    'Precio': 'Price',
     'intro_paragraph': 'This application is designed to compute climate-derivative prices based on temperature for the main coffee-growing regions of Colombia.',
     'A continuacion ingrese los parametros para realizar el pricing': 'Enter parameters to calculate pricing',
     'Seleccione la ciudad de interes': 'Select the city of interest',
@@ -133,7 +118,16 @@ def app_function(strike, ciudad):
     # Seleccionar solo las columnas de temperatura promedio para cada región
     columns_to_plot = ['TPROM_Anti', 'TPROM_Narino', 'TPROM_NortSan', 'TPROM_Tolima', 'TPROM_Cauca']
 
-    # fill_missing_data will handle missing dates; plotting done after resampling
+    # Graficar las columnas seleccionadas
+    plt.figure(figsize=(10, 5))
+    for column in columns_to_plot:
+        plt.plot(df.index, df[column], label=column)
+
+    plt.legend()
+    plt.title('Temperatura Promedio por Región')
+    plt.xlabel('Fecha')
+    plt.ylabel('Temperatura (°C)')
+
 
     def fill_missing_data(df, regions):
         df['Fecha'] = pd.to_datetime(df['Fecha'])  # Convertimos la columna 'Fecha' a datetime
@@ -159,9 +153,9 @@ def app_function(strike, ciudad):
         plt.plot(df.index, df[column], label=column)
 
     plt.legend()
-    plt.title(_('Temperatura Promedio por Región'))
-    plt.xlabel(_('Fecha'))
-    plt.ylabel(_('Temperatura (°C)'))
+    plt.title('Temperatura Promedio por Región')
+    plt.xlabel('Fecha')
+    plt.ylabel('Temperatura (°C)')
 
     # Limitar los años en el eje x hasta el año 2005
     plt.xlim(df.index.min(), pd.Timestamp('2006-7-13'))
@@ -218,9 +212,9 @@ def app_function(strike, ciudad):
         plt.figure(figsize=(10,6))
         for j in range(n):
             plt.plot(t, paths[j])
-        plt.xlabel(_('Time (years)'))
-        plt.ylabel(_('T [°C]'))
-        plt.title(_('Simulacion de Temperatura para {var}').format(var=i))
+        plt.xlabel('Time (years)')
+        plt.ylabel('T [°C]')
+        plt.title('Simulacion de Temperatura para ' + i)
 
         # Calculate the mean of the simulated paths
         Tp = np.mean(paths, axis=0)
@@ -289,7 +283,7 @@ def app_function(strike, ciudad):
         plt.plot(df_future.index, df_future[proj_col], label=f'Proyección {region}')
     plt.xlabel('Día del Año')
     plt.ylabel('Temperatura [°C]')
-    plt.title(_('Proyección de Temperaturas para el Próximo Año (366 días)'))
+    plt.title('Proyección de Temperaturas para el Próximo Año (366 días)')
     plt.legend()
 
 
@@ -304,12 +298,12 @@ def app_function(strike, ciudad):
 
     for region in regions:
         plt.figure(figsize=(10, 5))
-        plt.plot(df_TF.index, df_TF[region], label=_('Proyeccion Final (Fourier + Mean Reversion)'))
-        plt.plot(df_future.index, df_future[f"projection_{region}"], label=_('Proyeccion Fourier'))
-        plt.plot(df_Temp_f.index, df_Temp_f[f"TPROM_{region}MR"], label=_('Proyeccion Mean Reversioin'))
+        plt.plot(df_TF.index, df_TF[region], label='Proyeccion Final (Fourier + Mean Reversion)')
+        plt.plot(df_future.index, df_future[f"projection_{region}"], label="Proyeccion Fourier")
+        plt.plot(df_Temp_f.index, df_Temp_f[f"TPROM_{region}MR"], label='Proyeccion Mean Reversioin')
 
         plt.legend()
-        plt.title(_('Ajuste de Temperaturas en {region} usando Transformada de Fourier y Modelos Estocásticos').format(region=region))
+        plt.title(f'Ajuste de Temperaturas en {region} usando Transformada de Fourier y Modelos Estocásticos')
         plt.xlabel('Fecha')
         plt.ylabel('Temperatura (°C)')
 
@@ -347,9 +341,9 @@ def app_function(strike, ciudad):
         #plt.plot(df.index, df[f'CDD_{region}'], label=f'CDD ({region})', marker='o', linestyle='-')
 
         # Agregar título y etiquetas a los ejes para cada región
-        plt.title(_('Heating Degree Days (HDD) y Cooling Degree Days (CDD) en {region}').format(region=region))
-        plt.xlabel(_('Fecha'))
-        plt.ylabel(_('Grados-Día'))
+        plt.title(f'Heating Degree Days (HDD) y Cooling Degree Days (CDD) en {region}')
+        plt.xlabel('Fecha')
+        plt.ylabel('Grados-Día')
 
         # Mostrar la leyenda para cada región
         plt.legend()
@@ -429,9 +423,9 @@ def app_function(strike, ciudad):
     df_pricing_region = df_pricing[df_pricing['Region'] == ciudad]
 
     df_pricing_region.plot(x='Month', y=['Call HDD', 'Put HDD', 'Call CDD', 'Put CDD'], kind='line')
-    plt.title(_('Precio de Opciones Climáticas en {ciudad}').format(ciudad=ciudad))
-    plt.xlabel(_('Mes'))
-    plt.ylabel(_('Precio'))
+    plt.title(f"Precio de Opciones Climáticas en {ciudad}")
+    plt.xlabel('Mes')
+    plt.ylabel('Precio')
 
     fig = plt.gcf()
     plt.close()

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="{{ current_language }}">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ _('Mi Aplicación') }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+</head>
+<body>
+    <div class="header">
+        <div class="inner-header flex">
+            <div class="container">
+                <div style="position:absolute; top:12px; right:12px; z-index:1000;">
+                    <button id="lang-btn" onclick="toggleLang()" style="padding:6px 10px; cursor:pointer;">
+                        {% if current_language == 'es' %}EN{% else %}ES{% endif %}
+                    </button>
+                </div>
+                <h1 class="title" style="font-weight: bold;">{{ _('Pricing Derivados Climáticos') }}</h1>
+                <div>
+                    <p style="color: #ffffff; font-size: 18px; max-width: 740px;">{{ _('Esta aplicación ha sido diseñada para llevar a cabo el cálculo de precios de derivados climáticos, centrándose en la temperatura, para las principales regiones cafetaleras de Colombia.') }}</p>
+                </div>
+            </div>
+        </div>
+        <div>
+            <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+                <defs>
+                    <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+                </defs>
+                <g class="parallax">
+                    <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7" />
+                    <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
+                    <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
+                    <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
+                </g>
+            </svg>
+        </div>
+    </div>
+    
+    <div class="container2">
+        
+        <div class="grafica">
+            <img id= "grafica" src="{{ url_for('static', filename='grafica.png') }}" alt="{{ _('Mi imagen') }}">
+        </div>
+        
+        <div class="opciones">
+            <div class="form-group">
+                <p style="font-size: 25px; text-align: center; font-weight: bold; color: rgba(84,58,183,1);">{{ _('A continuacion ingrese los parametros para realizar el pricing') }}</p>
+                <div class="container3">
+                    <p style="font-size: 20px; text-align: left;">{{ _('Seleccione la ciudad de interes') }}</p>
+                    <div class="select">
+                        <select id="ciudad">
+                            <option value="Anti">Antioquia</option>
+                            <option value="Narino">Nariño</option>
+                            <option value="NortSan">Norte de Santander</option>
+                            <option value="Tolima">Tolima</option>
+                            <option value="Cauca">Cauca</option>
+                        </select>
+                    </div>
+                    <div class="down_note"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="container3">
+                    <p style="font-size: 20px; text-align: left;">{{ _('Seleccione el mes de interes') }}</p>
+                    <div class="select">
+                        <select id="mes">
+                            <option value=1>{{ _('Enero') }}</option>
+                            <option value=2>{{ _('Febrero') }}</option>
+                            <option value=3>{{ _('Marzo') }}</option>
+                            <option value=4>{{ _('Abril') }}</option>
+                            <option value=5>{{ _('Mayo') }}</option>
+                            <option value=6>{{ _('Junio') }}</option>
+                            <option value=7>{{ _('Julio') }}</option>
+                            <option value=8>{{ _('Agosto') }}</option>
+                            <option value=9>{{ _('Septiembre') }}</option>
+                            <option value=10>{{ _('Octubre') }}</option>
+                            <option value=11>{{ _('Noviembre') }}</option>
+                            <option value=12>{{ _('Diciembre') }}</option>
+                        </select>
+                    </div>
+                    <div class="down_note"></div>
+                </div>
+            </div>
+
+            <button class="button-29" role="button" onclick="calcularIntervalos()" style="display: block; margin: 0 auto;width: 200px;text-align: center;margin-top: 0.5cm;">{{ _('Calcular intervalos con Strike Price fijo') }}</button>
+
+            <!-- Nuevo campo para valor numérico -->
+            <div class="form-group">
+                <div class="container3">
+                    <p style="font-size: 20px; text-align: left;">{{ _('Ingrese el Strike Price') }}</p>
+                    <div class="select">
+                        <input type="number" id="valorNumerico" placeholder="{{ _('Ingrese un valor') }}" style="width: 100%;">
+                    </div>
+                    <div class="down_note"></div>
+                </div>
+            </div>
+            <button class="button-29" role="button" onclick="calcular()" style="display: block; margin: 0 auto;width: 200px;text-align: center;margin-top: 0.5cm;">{{ _('Graficar') }}</button>
+        </div>
+    </div>
+
+    <p style="font-size: 25px; text-align: center; font-weight: bold; color: rgba(84,58,183,1);">{{ _('A continuacion se presentan los intervalos de confianza con un Strike Price fijo de 8') }}</p>
+
+    <div class="contenedor5">
+        <div class="rectangulo">
+            <p style="font-size: 25px; text-align: center; font-weight: bold; color: rgb(210, 201, 249);">{{ _('Call Option') }}</p>
+            <p id="intervalo-Call-HDD" style="color: white; margin-right: 1cm;font-family: 'Lato';font-size: 20px;"></p>
+            <p id="intervalo-Call-CDD"style="color: white; margin-right: 1cm;font-family: 'Lato';font-size: 20px;" ></p>
+
+        </div>
+        <div class="rectangulo">
+            <p style="font-size: 25px; text-align: center; font-weight: bold; color: rgb(210, 201, 249);">{{ _('Put option') }}</p>
+            <p id="intervalo-Put-HDD" style="color: white; margin-right: 1cm;font-family: 'Lato';font-size: 20px;" ></p>
+            <p id="intervalo-Put-CDD" style="color: white; margin-right: 1cm;font-family: 'Lato';font-size: 20px;"></p>
+        </div>
+    </div>
+
+
+    <script>
+        function calcular() {
+            const ciudad = document.getElementById('ciudad').value;
+            const valorNumerico = document.getElementById('valorNumerico').value;
+
+            fetch('/calcular', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ciudad, valorNumerico }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const grafica = document.getElementById('grafica');
+                grafica.src = data.graficaUrl;
+                window.location.reload();
+            });
+        }
+        function calcularIntervalos() {
+            var ciudad = document.getElementById('ciudad').value;
+            var mes = document.getElementById('mes').value;
+
+            fetch('/calcular_intervalos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ciudad: ciudad, mes: mes }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('intervalo-Call-HDD').innerText = '{{ _('Call HDD: ') }}' + data.Call_HDD;
+                document.getElementById('intervalo-Put-HDD').innerText = '{{ _('Put HDD: ') }}' + data.Put_HDD;
+                document.getElementById('intervalo-Call-CDD').innerText = '{{ _('Call CDD: ') }}' + data.Call_CDD;
+                document.getElementById('intervalo-Put-CDD').innerText = '{{ _('Put CDD: ') }}' + data.Put_CDD;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+        function toggleLang() {
+            const current = '{{ current_language }}';
+            if (current === 'es') {
+                window.location.href = '/set_language/en';
+            } else {
+                window.location.href = '/set_language/es';
+            }
+        }
+    </script>
+
+
+</body>
+</html>
