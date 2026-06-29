@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
-<body>
+<body data-lang="{{ current_language }}">
 
     <!-- ── NAV ──────────────────────────────────────────────────────── -->
     <nav class="nav">
@@ -44,8 +44,8 @@
         <div class="hero-inner">
             <div class="hero-text">
                 <span class="hero-eyebrow">{{ _('Derivados climáticos · Regiones cafeteras') }}</span>
-                <h1 class="hero-heading">{{ _('Valuación de opciones<br>de temperatura') }}</h1>
-                <p class="hero-sub">{{ _('Modelo matemático para calcular el precio de derivados climáticos en los cinco principales departamentos productores de café de Colombia, usando series de Fourier y reversión a la media.') }}</p>
+                <h1 class="hero-heading">{{ _('Valuación de opciones') }}<br>{{ _('de temperatura') }}</h1>
+                <p class="hero-sub">{{ _('Valuación de opciones call/put sobre índices acumulados de grados-día (AccHDD, AccCDD) en cinco departamentos cafeteros de Colombia. La temperatura subyacente se modela como T(t) = S(t) + X(t), donde S(t) es una componente estacional determinista via serie de Fourier de tercer armónico y X(t) un proceso de Ornstein-Uhlenbeck con parámetros η, μ y σ estimados por MCO sobre primeras diferencias.') }}</p>
 
                 <div class="hero-chips">
                     <span class="chip">HDD · CDD</span>
@@ -76,27 +76,139 @@
     <section class="context-strip">
         <div class="context-inner">
             <div class="context-block">
-                <div class="context-icon">☕</div>
+                <div class="context-icon-wrap">
+                    <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 2a8 8 0 100 16A8 8 0 0010 2z" stroke="currentColor" stroke-width="1.4"/>
+                        <path d="M10 6v4l3 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                    </svg>
+                </div>
                 <div>
-                    <p class="context-title">{{ _('Riesgo climático en el café') }}</p>
-                    <p class="context-body">{{ _('El fenómeno El Niño y el cambio climático amenazan la producción de café Arábica colombiano. Las temperaturas proyectadas podrían subir ~5 °C hacia 2100, desplazando zonas óptimas de cultivo.') }}</p>
+                    <p class="context-title">{{ _('Índices HDD y CDD como subyacente') }}</p>
+                    <p class="context-body">{{ _('Para cada día t se definen HDD(t) = max(0, c − T(t)) y CDD(t) = max(0, T(t) − c), donde c = E[T] es la temperatura media histórica de la región. Los índices acumulados AccHDD(τ₁,τ₂) = Σ HDD(t) y AccCDD(τ₁,τ₂) = Σ CDD(t) sobre el período contractual constituyen el subyacente no transable de las opciones, lo que impide replicación dinámica y exige valuación bajo medida martingala equivalente.') }}</p>
                 </div>
             </div>
             <div class="context-divider"></div>
             <div class="context-block">
-                <div class="context-icon">📐</div>
+                <div class="context-icon-wrap">
+                    <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 17l4-5 3 2 3-6 4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M3 3h14v14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                    </svg>
+                </div>
                 <div>
-                    <p class="context-title">{{ _('Metodología') }}</p>
-                    <p class="context-body">{{ _('Proyecciones con series de Fourier de tercer armónico combinadas con reversión a la media. Los índices HDD y CDD cuantifican el impacto de desviaciones térmicas sobre los cultivos.') }}</p>
+                    <p class="context-title">{{ _('Proceso de Ornstein-Uhlenbeck + Fourier') }}</p>
+                    <p class="context-body">{{ _('La componente estacional S(t) se ajusta via serie de Fourier de orden 3: S(t) = a₀/2 + Σₙ[aₙcos(2πnt/366) + bₙsen(2πnt/366)], con 7 constantes estimadas por curve_fit. La perturbación estocástica X(t) sigue dX = η(μ − X)dt + σdW, discretizada como X(t+1) = μ(1−e^(−η)) + e^(−η)X(t) + ε, donde η = −ln(1+b) y μ = −a/b se obtienen de la regresión MCO de ΔT sobre T(t−1).') }}</p>
                 </div>
             </div>
             <div class="context-divider"></div>
             <div class="context-block">
-                <div class="context-icon">🛡</div>
-                <div>
-                    <p class="context-title">{{ _('Cobertura financiera') }}</p>
-                    <p class="context-body">{{ _('Opciones call y put sobre acumulados HDD/CDD ofrecen cobertura contra calor extremo y heladas, independientemente de si hay pérdida efectiva en la cosecha.') }}</p>
+                <div class="context-icon-wrap">
+                    <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.4"/>
+                        <path d="M7 10h6M10 7v6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                    </svg>
                 </div>
+                <div>
+                    <p class="context-title">{{ _('Fórmula de valuación libre de arbitraje') }}</p>
+                    <p class="context-body">{{ _('Bajo medida Q riesgo-neutral los precios de las opciones son: C_HDD = μ·e^(−rτ)·max(0, AccHDD − K) y P_HDD = μ·e^(−rτ)·max(0, K − AccHDD), donde μ = USD 25 es el precio por punto de índice (CME), r = 5.2149% la tasa libre de riesgo, K el strike en grados-día y τ = (τ₂−τ₁)/365 el plazo en años. Los intervalos de confianza al 95% se construyen como X̄ ± z_(α/2)·σ/√n sobre las n trayectorias simuladas del proceso OU.') }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── METHODOLOGY ───────────────────────────────────────────────── -->
+    <section class="method-section">
+        <div class="method-inner">
+            <div class="method-header">
+                <span class="method-eyebrow">{{ _('Fundamento matemático') }}</span>
+                <h2 class="method-heading">{{ _('Arquitectura del modelo') }}</h2>
+            </div>
+
+            <div class="method-grid">
+
+                <!-- Step 1 -->
+                <div class="method-card">
+                    <div class="method-step">01</div>
+                    <h3 class="method-card-title">{{ _('Temperatura promedio diaria') }}</h3>
+                    <p class="method-card-body">{{ _('La serie de entrada se construye como el promedio aritmético de la temperatura máxima y mínima registradas por IDEAM en cada estación aeroportuaria:') }}</p>
+                    <div class="eq-block">
+                        <span class="eq">T<sub>prom</sub>(t) = (T<sub>max</sub>(t) + T<sub>min</sub>(t)) / 2</span>
+                    </div>
+                    <p class="method-card-body">{{ _('Las observaciones faltantes se imputan mediante interpolación por vecino más cercano sobre la serie re-muestreada a frecuencia diaria.') }}</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="method-card">
+                    <div class="method-step">02</div>
+                    <h3 class="method-card-title">{{ _('Componente determinista — Serie de Fourier') }}</h3>
+                    <p class="method-card-body">{{ _('La estacionalidad anual se captura con una serie de Fourier de orden N = 3, ajustada por mínimos cuadrados no lineales (scipy.curve_fit) sobre los 8 766 datos históricos:') }}</p>
+                    <div class="eq-block">
+                        <span class="eq">S(t) = a<sub>0</sub>/2 + Σ<sub>n=1</sub><sup>3</sup> [a<sub>n</sub> cos(2πnt/366) + b<sub>n</sub> sen(2πnt/366)]</span>
+                    </div>
+                    <p class="method-card-body">{{ _('El ajuste entrega 7 constantes {a₀, a₁, b₁, a₂, b₂, a₃, b₃} por región, capturando el ciclo intra-anual de temperatura con un RMSE típico inferior a 1.2 °C.') }}</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="method-card">
+                    <div class="method-step">03</div>
+                    <h3 class="method-card-title">{{ _('Componente estocástica — Proceso de Ornstein-Uhlenbeck') }}</h3>
+                    <p class="method-card-body">{{ _('El residuo X(t) = T(t) − S(t) sigue un proceso de reversión a la media en tiempo continuo:') }}</p>
+                    <div class="eq-block">
+                        <span class="eq">dX = η(μ − X) dt + σ dW<sub>t</sub></span>
+                    </div>
+                    <p class="method-card-body">{{ _('Su discretización de Euler-Maruyama con paso dt = 1/365 da el esquema de simulación:') }}</p>
+                    <div class="eq-block">
+                        <span class="eq">X<sub>t+1</sub> = μ(1 − e<sup>−η</sup>) + e<sup>−η</sup> X<sub>t</sub> + ε<sub>t</sub> , &nbsp; ε<sub>t</sub> ~ N(0, σ<sub>ε</sub>²)</span>
+                    </div>
+                    <p class="method-card-body">{{ _('Los parámetros se estiman regresando ΔT = a + bT(t−1) + ε por MCO, de donde η = −ln(1+b) y μ = −a/b. Se generan n = 5 trayectorias y se toma la media como proyección estocástica.') }}</p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="method-card">
+                    <div class="method-step">04</div>
+                    <h3 class="method-card-title">{{ _('Índices de grados-día acumulados') }}</h3>
+                    <p class="method-card-body">{{ _('La proyección final T̂(t) = [S(t) + X̄(t)] / 2 alimenta el cálculo diario de grados-día, usando como umbral c = E[T̂]:') }}</p>
+                    <div class="eq-block">
+                        <span class="eq">HDD(t) = max(0, c − T̂(t))</span>
+                        <span class="eq">CDD(t) = max(0, T̂(t) − c)</span>
+                    </div>
+                    <p class="method-card-body">{{ _('Los acumulados sobre el período contractual [τ₁, τ₂] constituyen el subyacente no transable de las opciones:') }}</p>
+                    <div class="eq-block">
+                        <span class="eq">AccHDD(τ₁,τ₂) = Σ<sub>t=τ₁</sub><sup>τ₂</sup> HDD(t)</span>
+                        <span class="eq">AccCDD(τ₁,τ₂) = Σ<sub>t=τ₁</sub><sup>τ₂</sup> CDD(t)</span>
+                    </div>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="method-card">
+                    <div class="method-step">05</div>
+                    <h3 class="method-card-title">{{ _('Valuación libre de arbitraje') }}</h3>
+                    <p class="method-card-body">{{ _('Al ser AccHDD/AccCDD subyacentes no transables, no existe portafolio replicante. El precio se obtiene como esperanza bajo la medida martingala equivalente Q, descontada a la tasa libre de riesgo r:') }}</p>
+                    <div class="eq-block">
+                        <span class="eq">C<sub>HDD</sub> = μ · e<sup>−rτ</sup> · max(0, AccHDD − K)</span>
+                        <span class="eq">P<sub>HDD</sub> = μ · e<sup>−rτ</sup> · max(0, K − AccHDD)</span>
+                        <span class="eq">C<sub>CDD</sub> = μ · e<sup>−rτ</sup> · max(0, AccCDD − K)</span>
+                        <span class="eq">P<sub>CDD</sub> = μ · e<sup>−rτ</sup> · max(0, K − AccCDD)</span>
+                    </div>
+                    <p class="method-card-body">{{ _('Donde μ = USD 25/punto (CME Group), r = 5.2149%, K es el strike en grados-día y τ = (τ₂−τ₁)/365. Los intervalos de confianza al 95% se derivan como X̄ ± z₀.₀₂₅ · σ/√n sobre las trayectorias OU simuladas.') }}</p>
+                </div>
+
+                <!-- Step 6 -->
+                <div class="method-card">
+                    <div class="method-step">06</div>
+                    <h3 class="method-card-title">{{ _('Parámetros del modelo') }}</h3>
+                    <p class="method-card-body">{{ _('Valores fijos utilizados en la implementación:') }}</p>
+                    <div class="param-table">
+                        <div class="param-row"><span class="param-sym">μ</span><span class="param-desc">{{ _('Precio por punto de índice') }}</span><span class="param-val">USD 25</span></div>
+                        <div class="param-row"><span class="param-sym">r</span><span class="param-desc">{{ _('Tasa libre de riesgo') }}</span><span class="param-val">5.2149 %</span></div>
+                        <div class="param-row"><span class="param-sym">N</span><span class="param-desc">{{ _('Orden de la serie de Fourier') }}</span><span class="param-val">3</span></div>
+                        <div class="param-row"><span class="param-sym">n</span><span class="param-desc">{{ _('Trayectorias OU simuladas') }}</span><span class="param-val">5</span></div>
+                        <div class="param-row"><span class="param-sym">dt</span><span class="param-desc">{{ _('Paso de discretización') }}</span><span class="param-val">1/365 año</span></div>
+                        <div class="param-row"><span class="param-sym">IC</span><span class="param-desc">{{ _('Nivel de confianza') }}</span><span class="param-val">95 % (z = 1.96)</span></div>
+                        <div class="param-row"><span class="param-sym">c</span><span class="param-desc">{{ _('Umbral de grados-día') }}</span><span class="param-val">E[T̂] por región</span></div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
@@ -271,7 +383,7 @@
         }
 
         function toggleLang() {
-            const current = '{{ current_language }}';
+            const current = document.body.dataset.lang;
             window.location.href = current === 'es' ? '/set_language/en' : '/set_language/es';
         }
     </script>

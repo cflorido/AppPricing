@@ -1,0 +1,9 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Local history and editor artifacts
+.history/
+
+# Runtime-generated assets
+app/static/grafica.png

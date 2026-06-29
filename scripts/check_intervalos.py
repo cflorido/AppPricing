@@ -1,8 +1,12 @@
 import pandas as pd
+from pathlib import Path
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DATA_FILE = PROJECT_ROOT / 'data' / 'intervalos.csv'
 
 def intervalos(lugar, mes):
-    filename = 'intervalos.csv'
-    df = pd.read_csv(filename)
+    df = pd.read_csv(DATA_FILE)
     
     # Filtrar los datos según las condiciones especificadas
     filtro_Call_Hdd = (df['Region'] == lugar) & (df['Month'] == mes) & (df['Variable'] == 'Call_HDD')

@@ -38,13 +38,12 @@ Year: 2024
 ---
 
 ## Repository Structure
-Imagenes/  
-static/  
-templates/  
-Intervalos.csv  
-datos.csv  
-app.py  
-prueba.py  
+app/  
+data/  
+docs/  
+scripts/  
+run.py  
+requirements.txt  
 
 ---
 
@@ -64,5 +63,5 @@ pip install -r requirements.txt
 ```
 2. Run the application
 ```bash
-python app.py
+python run.py
 ```
